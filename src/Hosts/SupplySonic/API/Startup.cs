@@ -66,18 +66,17 @@ namespace AppAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string[] origins = { };
-            if (!string.IsNullOrEmpty(Configuration.GetValue<string>("AllowedOrigins")))
-            {
-                origins = Configuration.GetValue<string>("AllowedOrigins").Split(";");
-            }
+            string[] origins = (Configuration.GetValue<string>("AllowedOrigins") ?? string.Empty)
+                .Split(';', StringSplitOptions.RemoveEmptyEntries)
+                .Select(origin => origin.Trim())
+                .Where(origin => !string.IsNullOrEmpty(origin))
+                .ToArray();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => (origins.Length > 0 ? builder.WithOrigins(origins) : builder.AllowAnyOrigin())
+                    builder => (origins.Length > 0 ? builder.WithOrigins(origins).AllowCredentials() : builder.AllowAnyOrigin())
                     .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                    .AllowAnyHeader());
             });
             //Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 

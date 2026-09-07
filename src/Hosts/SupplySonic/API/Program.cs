@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -52,6 +53,8 @@ namespace AppAPI
                         configuration.AddJsonFile(
                             $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
                             optional: true);
+                        configuration.AddJsonFile("appsettings.Local.json", optional: true);
+                        configuration.AddEnvironmentVariables();
                     })
                     .UseSerilog();
                     //webBuilder.UseSerilog((ctx, config) =>
@@ -68,34 +71,73 @@ namespace AppAPI
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile(
                     $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
                     optional: true)
+                .AddJsonFile("appsettings.Local.json", optional: true)
+                .AddEnvironmentVariables()
                 .Build();
 
-            string logFilePath = configuration["LogFilePath:Uri"];
-            Log.Logger = new LoggerConfiguration()
+            var loggerConfiguration = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 //.Enrich.WithMachineName()
                 .WriteTo.Debug()
                 .WriteTo.Console()
-                .WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
-                .WriteTo.File(new JsonFormatter(), logFilePath + "/log.json",
+                .Enrich.WithProperty("Environment", environment)
+                .ReadFrom.Configuration(configuration);
+
+            if (Uri.TryCreate(configuration["ElasticConfiguration:Uri"], UriKind.Absolute, out Uri elasticUri))
+            {
+                try
+                {
+                    loggerConfiguration.WriteTo.Elasticsearch(ConfigureElasticSink(elasticUri, environment));
+                }
+                catch (Exception ex)
+                {
+                    Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+                    Log.Warning(ex, "Elasticsearch logging is disabled because its sink could not be configured.");
+                }
+            }
+
+            string logFilePath = GetLogFilePath(configuration["LogFilePath:Uri"]);
+            loggerConfiguration
+                .WriteTo.File(new JsonFormatter(), Path.Combine(logFilePath, "log.json"),
                 fileSizeLimitBytes: 10_000_000,
                 rollOnFileSizeLimit: true,
                 shared: true,
                 //retainedFileCountLimit:3,
                 rollingInterval: RollingInterval.Day,
-                flushToDiskInterval: TimeSpan.FromSeconds(1))
-                .Enrich.WithProperty("Environment", environment)
-                .ReadFrom.Configuration(configuration)
+                flushToDiskInterval: TimeSpan.FromSeconds(1));
+
+            Log.Logger = loggerConfiguration
                 .CreateLogger();
         }
 
-        private static ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string environment)
+        private static string GetLogFilePath(string configuredPath)
         {
-            return new ElasticsearchSinkOptions(new Uri(configuration["ElasticConfiguration:Uri"]))
+            string fallbackPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+            string logPath = string.IsNullOrWhiteSpace(configuredPath) ||
+                (Path.DirectorySeparatorChar == '/' && configuredPath.Contains(":"))
+                ? fallbackPath
+                : configuredPath;
+
+            try
+            {
+                Directory.CreateDirectory(logPath);
+                return logPath;
+            }
+            catch (Exception)
+            {
+                Directory.CreateDirectory(fallbackPath);
+                return fallbackPath;
+            }
+        }
+
+        private static ElasticsearchSinkOptions ConfigureElasticSink(Uri elasticUri, string environment)
+        {
+            return new ElasticsearchSinkOptions(elasticUri)
             {
                 AutoRegisterTemplate = true,
                 IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.Now:yyyy-MM}"
