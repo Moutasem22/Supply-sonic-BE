@@ -25,7 +25,7 @@ For Azure SQL SQL authentication, set `ConnectionStrings__DefaultConnection`
 to a value such as:
 
 ```text
-Server=tcp:<server>.database.windows.net,1433;Initial Catalog=<database>;User ID=<sql-admin>;******;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;MultipleActiveResultSets=True;
+Server=tcp:<server>.database.windows.net,1433;Initial Catalog=<database>;User ID=<sql-admin>;Password=<sql-admin-secret>;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;MultipleActiveResultSets=True;
 ```
 
 Replace the redacted segment with the SQL authentication credential property
