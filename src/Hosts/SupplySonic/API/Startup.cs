@@ -74,10 +74,11 @@ namespace AppAPI
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => (origins.Length > 0 ? builder.WithOrigins(origins) : builder.AllowAnyOrigin())
+                    builder => (origins.Length > 0
+                        ? builder.WithOrigins(origins).AllowCredentials()
+                        : builder.AllowAnyOrigin())
                     .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                    .AllowAnyHeader());
             });
             //Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
