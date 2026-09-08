@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using DB;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -34,7 +37,9 @@ namespace AppAPI
         {
             try
             {
-                CreateHostBuilder(args).Build().Run();
+                var host = CreateHostBuilder(args).Build();
+                ApplyPendingMigrations(host);
+                host.Run();
             }
             catch (System.Exception ex)
             {
@@ -42,6 +47,21 @@ namespace AppAPI
                 throw;
             }
         }
+
+        private static void ApplyPendingMigrations(IHost host)
+        {
+            try
+            {
+                using var scope = host.Services.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<DBContext>();
+                context.Database.Migrate();
+            }
+            catch (System.Exception ex)
+            {
+                Log.Warning(ex, "Warning: Failed to apply database migrations, continuing application startup.");
+            }
+        }
+
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
