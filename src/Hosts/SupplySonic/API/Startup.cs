@@ -217,7 +217,6 @@ namespace AppAPI
 
 
 
-            app.UseCors("CorsPolicy");
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseMiddleware<ExceptionMiddleware>();
@@ -240,6 +239,8 @@ namespace AppAPI
             app.UseRequestLocalization();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
             app.UseAuthorization();
