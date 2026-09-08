@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DTO.CommandDTO;
-using DTO.IdentityDTO;
+using DTO;
 using Helpers;
-using IServiceContractor.IdentityInterFaces;
+using IServiceContractor;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppAPI.Controllers;

@@ -1,4 +1,4 @@
-﻿using DTO;
+using DTO;
 using Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -14,7 +14,6 @@ namespace AppAPI.CommonService
 {
     //https://code-maze.com/global-error-handling-aspnetcore/
     //https://codewithmukesh.com/blog/global-exception-handling-in-aspnet-core/
-    // Redeploy trigger: force a fresh build/deploy so this version becomes Active.
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
@@ -60,8 +59,8 @@ namespace AppAPI.CommonService
                     RequestQuery = queryStr,
                     Request = httpContext.Request.Headers,
 
-                    ControllerName = httpContext.Request.RouteValues.TryGetValue("controller", out var bCtrl) ? bCtrl?.ToString() : null,
-                    ActionName = httpContext.Request.RouteValues.TryGetValue("action", out var bAction) ? bAction?.ToString() : null
+                    ControllerName = httpContext.Request.RouteValues.TryGetValue("controller", out var controllerValue) ? controllerValue?.ToString() : null,
+                    ActionName = httpContext.Request.RouteValues.TryGetValue("action", out var actionValue) ? actionValue?.ToString() : null
                 };
                 var edata = _globalFormat.LogFormat(httpContext, obj);
                 _logger.LogWarning($"End Execute by {edata.UserId} from connection={edata.IP} using data={edata.Data}");
@@ -76,17 +75,10 @@ namespace AppAPI.CommonService
                 //httpContext.Request.Body.Seek(0, SeekOrigin.Begin);
                 var bodyStr = "";
                 var queryStr = "";
-                try
+                using (StreamReader reader
+                  = new StreamReader(httpContext.Request.Body))
                 {
-                    using (StreamReader reader
-                      = new StreamReader(httpContext.Request.Body))
-                    {
-                        bodyStr = await reader.ReadToEndAsync();
-                    }
-                }
-                catch
-                {
-                    bodyStr = "";
+                    bodyStr = await reader.ReadToEndAsync();
                 }
                 if (httpContext.Request.QueryString.HasValue)
                 {
@@ -103,34 +95,13 @@ namespace AppAPI.CommonService
                     RequestBody = bodyStr,
                     RequestQuery = queryStr,
                     Request = httpContext.Request.Headers,
-                    ControllerName = httpContext.Request.RouteValues.TryGetValue("controller", out var ctrl) ? ctrl?.ToString() : null,
-                    ActionName = httpContext.Request.RouteValues.TryGetValue("action", out var action) ? action?.ToString() : null
+                    ControllerName = httpContext.Request.RouteValues.TryGetValue("controller", out var controllerValue) ? controllerValue?.ToString() : null,
+                    ActionName = httpContext.Request.RouteValues.TryGetValue("action", out var actionValue) ? actionValue?.ToString() : null
                 };
                 var edata = _globalFormat.LogFormat(httpContext, obj);
-                _logger.LogError(ex, $"End Execute by {edata.UserId} from connection={edata.IP} using data={edata.Data}. Message={ex.Message}");
-                if (!httpContext.Response.HasStarted)
-                {
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;//(int)HttpStatusCode.InternalServerError;
-                    // TEMPORARY DEBUG: expose real exception details to the client for troubleshooting.
-                    // TODO: REVERT this before going back to normal production behavior.
-                    await httpContext.Response.WriteAsJsonAsync(new
-                    {
-                        EXCode = obj.EXCode,
-                        Message = new
-                        {
-                            SystemError = "SystemError",
-                            DebugMessage = ex.Message,
-                            DebugExceptionType = ex.GetType().FullName,
-                            DebugStackTrace = ex.StackTrace,
-                            DebugInnerException = ex.InnerException != null ? new
-                            {
-                                Message = ex.InnerException.Message,
-                                StackTrace = ex.InnerException.StackTrace
-                            } : null
-                        },
-                        type = obj.LogType
-                    });
-                }
+                _logger.LogError($"End Execute by {edata.UserId} from connection={edata.IP} using data={edata.Data}");
+                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;//(int)HttpStatusCode.InternalServerError;
+                await httpContext.Response.WriteAsJsonAsync(new { EXCode = obj.EXCode, Message = new { SystemError = "SystemError" }, type = obj.LogType }); //BadRequest(new { EXCode = obj.EXCode, Message = "SystemError", type = obj.type });
             }
         }
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)

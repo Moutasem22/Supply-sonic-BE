@@ -1,5 +1,4 @@
 ﻿using DTO;
-using DTO.CommandDTO;
 using IServiceContractor;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +39,7 @@ namespace AppAPI.Controllers
             return Ok(val);
         }
 
-        [HttpPut("Update")]
+        [HttpPost("Update")]
         public async Task<IActionResult> Update(ClientAddEditDto lockupDto)
         {
             var val = await _clientService.Update(lockupDto);

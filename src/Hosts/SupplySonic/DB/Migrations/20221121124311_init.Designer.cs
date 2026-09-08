@@ -1566,6 +1566,986 @@ namespace DB.Migrations
                     b.ToTable("UserSettings");
                 });
 
+            modelBuilder.Entity("Core.WorkFlow.WFAction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ActionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActionId")
+                        .IsUnique();
+
+                    b.ToTable("WFAction");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFActivity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ActivityType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WFActivity");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRejectReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RejectedBy")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("StateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WFRequestHistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WFStateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFRequestHistoryId");
+
+                    b.HasIndex("WFStateId");
+
+                    b.ToTable("WFRejectReason");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LastActionType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFCurrentStateId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WFPrevStateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WFRequestSituation")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkFlowId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFCurrentStateId");
+
+                    b.HasIndex("WorkFlowId");
+
+                    b.ToTable("WFRequest");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequestAction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReady")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFActionId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WFRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("WFTransitionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFActionId");
+
+                    b.HasIndex("WFRequestId");
+
+                    b.HasIndex("WFTransitionId");
+
+                    b.ToTable("WFRequestAction");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequestHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LastActionType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFCurrentStateId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WFPrevStateId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WFRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFCurrentStateId");
+
+                    b.HasIndex("WFRequestId");
+
+                    b.ToTable("WFRequestHistory");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequestPosition", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FirstApproval")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FourthApproval")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("SecondApproval")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ThirdApproval")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WFRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFRequestId")
+                        .IsUnique();
+
+                    b.ToTable("WFRequestPosition");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFState", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PageId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFPageLevel")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PageId");
+
+                    b.ToTable("WFState");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateActivity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PrevWFActionId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFActivityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WFStateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PrevWFActionId");
+
+                    b.HasIndex("WFActivityId");
+
+                    b.HasIndex("WFStateId");
+
+                    b.ToTable("WFStateActivitie");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateActivityNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NotificationTemplateAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NotificationTemplateEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFStateActivityId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFStateActivityId");
+
+                    b.ToTable("WFStateActivityNotification");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateAssignedUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WFStateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WFStateId");
+
+                    b.ToTable("WFStateAssignedUser");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFStateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("WFStateId");
+
+                    b.ToTable("WFStateRole");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsFinal")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WFStateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WFStateId");
+
+                    b.ToTable("WFStateUser");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateUserStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentUserState")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("WFRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("WFStateAssignedUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFStateAssignedUserId")
+                        .IsUnique();
+
+                    b.ToTable("WFStateUserStatus");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("InitPoint")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFCurrentStateId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WFNextStateId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkFlowId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFCurrentStateId");
+
+                    b.HasIndex("WFNextStateId");
+
+                    b.HasIndex("WorkFlowId");
+
+                    b.ToTable("WFTransition");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransitionAction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFActionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WFTransitionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFActionId");
+
+                    b.HasIndex("WFTransitionId");
+
+                    b.ToTable("WFTransitionAction");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransitionActivity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PrevWFActionId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFActivityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WFTransitionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PrevWFActionId");
+
+                    b.HasIndex("WFActivityId");
+
+                    b.HasIndex("WFTransitionId");
+
+                    b.ToTable("WFTransitionActivity");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransitionActivityNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NotificationTemplateAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NotificationTemplateEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFTransitionActivityId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WFTransitionActivityId");
+
+                    b.ToTable("WFTransitionActivityNotification");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WorkFlow", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("WFType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkFlow");
+                });
 
             modelBuilder.Entity("Core.Models.AppearancSetting", b =>
                 {
@@ -1736,6 +2716,324 @@ namespace DB.Migrations
                     b.Navigation("Notification");
                 });
 
+            modelBuilder.Entity("Core.WorkFlow.WFAction", b =>
+                {
+                    b.HasOne("Core.Models.Identity.Action", "Action")
+                        .WithOne("WFAction")
+                        .HasForeignKey("Core.WorkFlow.WFAction", "ActionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Action");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRejectReason", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFRequestHistory", "WFRequestHistory")
+                        .WithMany("WFRejectReasons")
+                        .HasForeignKey("WFRequestHistoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFState", null)
+                        .WithMany("WFRejectReasons")
+                        .HasForeignKey("WFStateId");
+
+                    b.Navigation("WFRequestHistory");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequest", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFState", "WFCurrentState")
+                        .WithMany()
+                        .HasForeignKey("WFCurrentStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WorkFlow", "WorkFlow")
+                        .WithMany("WFRequests")
+                        .HasForeignKey("WorkFlowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WFCurrentState");
+
+                    b.Navigation("WorkFlow");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequestAction", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFAction", "WFAction")
+                        .WithMany("WFRequestActions")
+                        .HasForeignKey("WFActionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFRequest", "WFRequest")
+                        .WithMany("WFRequestActions")
+                        .HasForeignKey("WFRequestId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFTransition", "WFTransition")
+                        .WithMany("WFRequestActions")
+                        .HasForeignKey("WFTransitionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("WFAction");
+
+                    b.Navigation("WFRequest");
+
+                    b.Navigation("WFTransition");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequestHistory", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFState", "WFCurrentState")
+                        .WithMany()
+                        .HasForeignKey("WFCurrentStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFRequest", "WFRequest")
+                        .WithMany("WFRequestHistories")
+                        .HasForeignKey("WFRequestId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("WFCurrentState");
+
+                    b.Navigation("WFRequest");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequestPosition", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFRequest", "WFRequest")
+                        .WithOne("WFRequestPosition")
+                        .HasForeignKey("Core.WorkFlow.WFRequestPosition", "WFRequestId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("WFRequest");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFState", b =>
+                {
+                    b.HasOne("Core.Models.Identity.Page", "Page")
+                        .WithMany()
+                        .HasForeignKey("PageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Page");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateActivity", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFAction", "PrevWFAction")
+                        .WithMany()
+                        .HasForeignKey("PrevWFActionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFActivity", "WFActivity")
+                        .WithMany("WFStateActivities")
+                        .HasForeignKey("WFActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFState", "WFState")
+                        .WithMany("WFStateActivity")
+                        .HasForeignKey("WFStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PrevWFAction");
+
+                    b.Navigation("WFActivity");
+
+                    b.Navigation("WFState");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateActivityNotification", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFStateActivity", "WFStateActivity")
+                        .WithMany("WFStateActivityNotifications")
+                        .HasForeignKey("WFStateActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WFStateActivity");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateAssignedUser", b =>
+                {
+                    b.HasOne("Core.Models.Identity.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFState", "WFState")
+                        .WithMany("WFStateAssignedUsers")
+                        .HasForeignKey("WFStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WFState");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateRole", b =>
+                {
+                    b.HasOne("Core.Models.Identity.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFState", "WFState")
+                        .WithMany()
+                        .HasForeignKey("WFStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("WFState");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateUser", b =>
+                {
+                    b.HasOne("Core.Models.Identity.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Models.Identity.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFState", "WFState")
+                        .WithMany("WFStateUsers")
+                        .HasForeignKey("WFStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+
+                    b.Navigation("WFState");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateUserStatus", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFStateAssignedUser", "WFStateAssignedUser")
+                        .WithOne("WFStateUserStatus")
+                        .HasForeignKey("Core.WorkFlow.WFStateUserStatus", "WFStateAssignedUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WFStateAssignedUser");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransition", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFState", "WFCurrentState")
+                        .WithMany("WFCurrentTransitions")
+                        .HasForeignKey("WFCurrentStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFState", "WFNextState")
+                        .WithMany("WFNextTransitions")
+                        .HasForeignKey("WFNextStateId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WorkFlow", "WorkFlow")
+                        .WithMany("WFTransitions")
+                        .HasForeignKey("WorkFlowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WFCurrentState");
+
+                    b.Navigation("WFNextState");
+
+                    b.Navigation("WorkFlow");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransitionAction", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFAction", "WFAction")
+                        .WithMany("WFTransitionActions")
+                        .HasForeignKey("WFActionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFTransition", "WFTransition")
+                        .WithMany("WFTransitionActions")
+                        .HasForeignKey("WFTransitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WFAction");
+
+                    b.Navigation("WFTransition");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransitionActivity", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFAction", "PrevWFAction")
+                        .WithMany("WFTransitionActivities")
+                        .HasForeignKey("PrevWFActionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFActivity", "WFActivity")
+                        .WithMany("WFTransitionActivities")
+                        .HasForeignKey("WFActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.WorkFlow.WFTransition", "WFTransition")
+                        .WithMany("WFTransitionActivities")
+                        .HasForeignKey("WFTransitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PrevWFAction");
+
+                    b.Navigation("WFActivity");
+
+                    b.Navigation("WFTransition");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransitionActivityNotification", b =>
+                {
+                    b.HasOne("Core.WorkFlow.WFTransitionActivity", "WFTransitionActivity")
+                        .WithMany("WFTransitionActivityNotifications")
+                        .HasForeignKey("WFTransitionActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WFTransitionActivity");
+                });
+
+            modelBuilder.Entity("Core.Models.Identity.Action", b =>
+                {
+                    b.Navigation("PageActions");
+
+                    b.Navigation("WFAction")
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Core.Models.Identity.AppUser", b =>
                 {
@@ -1773,6 +3071,83 @@ namespace DB.Migrations
                     b.Navigation("TrackerDetails");
                 });
 
+            modelBuilder.Entity("Core.WorkFlow.WFAction", b =>
+                {
+                    b.Navigation("WFRequestActions");
+
+                    b.Navigation("WFTransitionActions");
+
+                    b.Navigation("WFTransitionActivities");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFActivity", b =>
+                {
+                    b.Navigation("WFStateActivities");
+
+                    b.Navigation("WFTransitionActivities");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequest", b =>
+                {
+                    b.Navigation("WFRequestActions");
+
+                    b.Navigation("WFRequestHistories");
+
+                    b.Navigation("WFRequestPosition")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFRequestHistory", b =>
+                {
+                    b.Navigation("WFRejectReasons");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFState", b =>
+                {
+                    b.Navigation("WFCurrentTransitions");
+
+                    b.Navigation("WFNextTransitions");
+
+                    b.Navigation("WFRejectReasons");
+
+                    b.Navigation("WFStateActivity");
+
+                    b.Navigation("WFStateAssignedUsers");
+
+                    b.Navigation("WFStateUsers");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateActivity", b =>
+                {
+                    b.Navigation("WFStateActivityNotifications");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFStateAssignedUser", b =>
+                {
+                    b.Navigation("WFStateUserStatus")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransition", b =>
+                {
+                    b.Navigation("WFRequestActions");
+
+                    b.Navigation("WFTransitionActions");
+
+                    b.Navigation("WFTransitionActivities");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WFTransitionActivity", b =>
+                {
+                    b.Navigation("WFTransitionActivityNotifications");
+                });
+
+            modelBuilder.Entity("Core.WorkFlow.WorkFlow", b =>
+                {
+                    b.Navigation("WFRequests");
+
+                    b.Navigation("WFTransitions");
+                });
 #pragma warning restore 612, 618
         }
     }

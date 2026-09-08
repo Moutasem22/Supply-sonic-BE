@@ -20,13 +20,24 @@ namespace IServiceContractor.ICommonService
 {
     public interface IBaseService
     {
-        IStringLocalizer<SharedResource> Localizer { get; }
+        string GetCurrentLanguage();
+        DBContext GetContext();
+        IStringLocalizer<SharedResource> GetLocalizer();
+        void Validate<T>(T dto, IValidator<T> validator);
+        IExceptionMessages GetExceptionMessages();
+
         DBContext Context { get; }
+        IStringLocalizer<SharedResource> Localizer { get; }
+
         string Language { get; }
         int CurrentUserId { get; }
         string CurrentUrlPath { get; }
 
         IExceptionMessages ExceptionMessages { get; }
+
+        //IPasswordHasher<AppUser> PasswordHasher { get; }
+        //SignInManager<AppUser> SignInManager { get; }
+
         IHttpContextAccessor HttpContextAccessor { get; }
 
         IHostEnvironment HostEnvironment { get; }

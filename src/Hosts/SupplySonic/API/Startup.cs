@@ -2,6 +2,7 @@ using Service.HubConfig;
 using Core.Models.Identity;
 using DB;
 using Helpers;
+using IServiceContractor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,7 +48,6 @@ using Service.Validators;
 using IServiceContractor.ICommonService;
 using Core.Enums;
 using AppAPI.CommonService;
-using IServiceContractor.INotificationServices;
 
 namespace AppAPI
 {
@@ -66,17 +66,18 @@ namespace AppAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string[] origins = (Configuration.GetValue<string>("AllowedOrigins") ?? string.Empty)
-                .Split(';', StringSplitOptions.RemoveEmptyEntries)
-                .Select(origin => origin.Trim())
-                .Where(origin => !string.IsNullOrEmpty(origin))
-                .ToArray();
+            string[] origins = { };
+            if (!string.IsNullOrEmpty(Configuration.GetValue<string>("AllowedOrigins")))
+            {
+                origins = Configuration.GetValue<string>("AllowedOrigins").Split(";");
+            }
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => (origins.Length > 0 ? builder.WithOrigins(origins).AllowCredentials() : builder.AllowAnyOrigin())
+                    builder => (origins.Length > 0 ? builder.WithOrigins(origins) : builder.AllowAnyOrigin())
                     .AllowAnyMethod()
-                    .AllowAnyHeader());
+                    .AllowAnyHeader()
+                    .AllowCredentials());
             });
             //Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 

@@ -2,7 +2,6 @@
 using Core.Models;
 using DB;
 using DTO;
-using DTO.CommandDTO;
 using FluentValidation;
 using Helpers;
 using IServiceContractor;
@@ -52,7 +51,7 @@ namespace Service
             if (lockup == null)
             {
                 ErrorMessageDto errorMessage = new ErrorMessageDto() { ErrorMessage = "ItemNotExist", PropertyName = "Client" };
-               _baseService.ExceptionMessages.ReturnExceptionMessages(errorMessage);
+                _baseService.GetExceptionMessages().ReturnExceptionMessages(errorMessage);
             }
 
             lockup.Delete();
@@ -151,7 +150,7 @@ namespace Service
             if (query == null)
             {
                 ErrorMessageDto errorMessage = new ErrorMessageDto() { ErrorMessage = "ItemNotExist", PropertyName = "id" };
-                _baseService.ExceptionMessages.ReturnExceptionMessages(errorMessage);
+                _baseService.GetExceptionMessages().ReturnExceptionMessages(errorMessage);
             }
             ResultViewModel<ClientResultDto> result = new() { Data = query.Adapt<ClientResultDto>(), IsSuccess = true };
             return result;

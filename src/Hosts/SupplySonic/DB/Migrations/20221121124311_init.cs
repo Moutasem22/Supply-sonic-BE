@@ -410,7 +410,77 @@ namespace DB.Migrations
                     table.PrimaryKey("PK_UserSettings", x => x.Id);
                 });
 
-           
+            migrationBuilder.CreateTable(
+                name: "WFActivity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ActivityType = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFActivity", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkFlow",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameAr = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WFType = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkFlow", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFAction",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ActionType = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActionId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFAction", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFAction_Actions_ActionId",
+                        column: x => x.ActionId,
+                        principalTable: "Actions",
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "AppearancSettings",
@@ -527,7 +597,33 @@ namespace DB.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-           
+            migrationBuilder.CreateTable(
+                name: "WFState",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PageId = table.Column<int>(type: "int", nullable: false),
+                    WFPageLevel = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFState", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFState_Pages_PageId",
+                        column: x => x.PageId,
+                        principalTable: "Pages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateTable(
                 name: "RoleClaims",
@@ -795,6 +891,521 @@ namespace DB.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "WFRequest",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WorkFlowId = table.Column<int>(type: "int", nullable: false),
+                    WFCurrentStateId = table.Column<int>(type: "int", nullable: false),
+                    WFRequestSituation = table.Column<int>(type: "int", nullable: false),
+                    LastActionType = table.Column<int>(type: "int", nullable: false),
+                    WFPrevStateId = table.Column<int>(type: "int", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFRequest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFRequest_WFState_WFCurrentStateId",
+                        column: x => x.WFCurrentStateId,
+                        principalTable: "WFState",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFRequest_WorkFlow_WorkFlowId",
+                        column: x => x.WorkFlowId,
+                        principalTable: "WorkFlow",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFStateActivitie",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFStateId = table.Column<int>(type: "int", nullable: false),
+                    WFActivityId = table.Column<int>(type: "int", nullable: false),
+                    PrevWFActionId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFStateActivitie", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFStateActivitie_WFAction_PrevWFActionId",
+                        column: x => x.PrevWFActionId,
+                        principalTable: "WFAction",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFStateActivitie_WFActivity_WFActivityId",
+                        column: x => x.WFActivityId,
+                        principalTable: "WFActivity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFStateActivitie_WFState_WFStateId",
+                        column: x => x.WFStateId,
+                        principalTable: "WFState",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFStateAssignedUser",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    WFStateId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFStateAssignedUser", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFStateAssignedUser_AppUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AppUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFStateAssignedUser_WFState_WFStateId",
+                        column: x => x.WFStateId,
+                        principalTable: "WFState",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFStateRole",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    WFStateId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFStateRole", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFStateRole_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFStateRole_WFState_WFStateId",
+                        column: x => x.WFStateId,
+                        principalTable: "WFState",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFStateUser",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFStateId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    IsFinal = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFStateUser", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFStateUser_AppUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AppUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFStateUser_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFStateUser_WFState_WFStateId",
+                        column: x => x.WFStateId,
+                        principalTable: "WFState",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFTransition",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WorkFlowId = table.Column<int>(type: "int", nullable: false),
+                    WFCurrentStateId = table.Column<int>(type: "int", nullable: false),
+                    WFNextStateId = table.Column<int>(type: "int", nullable: false),
+                    InitPoint = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFTransition", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFTransition_WFState_WFCurrentStateId",
+                        column: x => x.WFCurrentStateId,
+                        principalTable: "WFState",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFTransition_WFState_WFNextStateId",
+                        column: x => x.WFNextStateId,
+                        principalTable: "WFState",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_WFTransition_WorkFlow_WorkFlowId",
+                        column: x => x.WorkFlowId,
+                        principalTable: "WorkFlow",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFRequestHistory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WFCurrentStateId = table.Column<int>(type: "int", nullable: false),
+                    WFPrevStateId = table.Column<int>(type: "int", nullable: true),
+                    LastActionType = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFRequestHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFRequestHistory_WFRequest_WFRequestId",
+                        column: x => x.WFRequestId,
+                        principalTable: "WFRequest",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_WFRequestHistory_WFState_WFCurrentStateId",
+                        column: x => x.WFCurrentStateId,
+                        principalTable: "WFState",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFRequestPosition",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstApproval = table.Column<int>(type: "int", nullable: false),
+                    SecondApproval = table.Column<int>(type: "int", nullable: false),
+                    ThirdApproval = table.Column<int>(type: "int", nullable: false),
+                    FourthApproval = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFRequestPosition", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFRequestPosition_WFRequest_WFRequestId",
+                        column: x => x.WFRequestId,
+                        principalTable: "WFRequest",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFStateActivityNotification",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFStateActivityId = table.Column<int>(type: "int", nullable: false),
+                    NotificationTemplateAr = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NotificationTemplateEn = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFStateActivityNotification", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFStateActivityNotification_WFStateActivitie_WFStateActivityId",
+                        column: x => x.WFStateActivityId,
+                        principalTable: "WFStateActivitie",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFStateUserStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFStateAssignedUserId = table.Column<int>(type: "int", nullable: false),
+                    WFRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CurrentUserState = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFStateUserStatus", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFStateUserStatus_WFStateAssignedUser_WFStateAssignedUserId",
+                        column: x => x.WFStateAssignedUserId,
+                        principalTable: "WFStateAssignedUser",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFRequestAction",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WFActionId = table.Column<int>(type: "int", nullable: false),
+                    WFTransitionId = table.Column<int>(type: "int", nullable: false),
+                    IsReady = table.Column<bool>(type: "bit", nullable: false),
+                    IsComplete = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFRequestAction", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFRequestAction_WFAction_WFActionId",
+                        column: x => x.WFActionId,
+                        principalTable: "WFAction",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_WFRequestAction_WFRequest_WFRequestId",
+                        column: x => x.WFRequestId,
+                        principalTable: "WFRequest",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_WFRequestAction_WFTransition_WFTransitionId",
+                        column: x => x.WFTransitionId,
+                        principalTable: "WFTransition",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFTransitionAction",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFTransitionId = table.Column<int>(type: "int", nullable: false),
+                    WFActionId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFTransitionAction", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFTransitionAction_WFAction_WFActionId",
+                        column: x => x.WFActionId,
+                        principalTable: "WFAction",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFTransitionAction_WFTransition_WFTransitionId",
+                        column: x => x.WFTransitionId,
+                        principalTable: "WFTransition",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFTransitionActivity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFTransitionId = table.Column<int>(type: "int", nullable: false),
+                    WFActivityId = table.Column<int>(type: "int", nullable: false),
+                    PrevWFActionId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFTransitionActivity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFTransitionActivity_WFAction_PrevWFActionId",
+                        column: x => x.PrevWFActionId,
+                        principalTable: "WFAction",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFTransitionActivity_WFActivity_WFActivityId",
+                        column: x => x.WFActivityId,
+                        principalTable: "WFActivity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFTransitionActivity_WFTransition_WFTransitionId",
+                        column: x => x.WFTransitionId,
+                        principalTable: "WFTransition",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFRejectReason",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StateId = table.Column<int>(type: "int", nullable: false),
+                    RejectedBy = table.Column<int>(type: "int", nullable: false),
+                    WFRequestHistoryId = table.Column<int>(type: "int", nullable: false),
+                    WFStateId = table.Column<int>(type: "int", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFRejectReason", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFRejectReason_WFRequestHistory_WFRequestHistoryId",
+                        column: x => x.WFRequestHistoryId,
+                        principalTable: "WFRequestHistory",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WFRejectReason_WFState_WFStateId",
+                        column: x => x.WFStateId,
+                        principalTable: "WFState",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WFTransitionActivityNotification",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WFTransitionActivityId = table.Column<int>(type: "int", nullable: false),
+                    NotificationTemplateAr = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NotificationTemplateEn = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WFTransitionActivityNotification", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WFTransitionActivityNotification_WFTransitionActivity_WFTransitionActivityId",
+                        column: x => x.WFTransitionActivityId,
+                        principalTable: "WFTransitionActivity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppearancSettings_LogoAttachmentId",
@@ -895,9 +1506,173 @@ namespace DB.Migrations
                 table: "UserRoles",
                 column: "RoleId");
 
-        
+            migrationBuilder.CreateIndex(
+                name: "IX_WFAction_ActionId",
+                table: "WFAction",
+                column: "ActionId",
+                unique: true);
 
-           
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRejectReason_WFRequestHistoryId",
+                table: "WFRejectReason",
+                column: "WFRequestHistoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRejectReason_WFStateId",
+                table: "WFRejectReason",
+                column: "WFStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRequest_WFCurrentStateId",
+                table: "WFRequest",
+                column: "WFCurrentStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRequest_WorkFlowId",
+                table: "WFRequest",
+                column: "WorkFlowId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRequestAction_WFActionId",
+                table: "WFRequestAction",
+                column: "WFActionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRequestAction_WFRequestId",
+                table: "WFRequestAction",
+                column: "WFRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRequestAction_WFTransitionId",
+                table: "WFRequestAction",
+                column: "WFTransitionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRequestHistory_WFCurrentStateId",
+                table: "WFRequestHistory",
+                column: "WFCurrentStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRequestHistory_WFRequestId",
+                table: "WFRequestHistory",
+                column: "WFRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFRequestPosition_WFRequestId",
+                table: "WFRequestPosition",
+                column: "WFRequestId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFState_PageId",
+                table: "WFState",
+                column: "PageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateActivitie_PrevWFActionId",
+                table: "WFStateActivitie",
+                column: "PrevWFActionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateActivitie_WFActivityId",
+                table: "WFStateActivitie",
+                column: "WFActivityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateActivitie_WFStateId",
+                table: "WFStateActivitie",
+                column: "WFStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateActivityNotification_WFStateActivityId",
+                table: "WFStateActivityNotification",
+                column: "WFStateActivityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateAssignedUser_UserId",
+                table: "WFStateAssignedUser",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateAssignedUser_WFStateId",
+                table: "WFStateAssignedUser",
+                column: "WFStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateRole_RoleId",
+                table: "WFStateRole",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateRole_WFStateId",
+                table: "WFStateRole",
+                column: "WFStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateUser_RoleId",
+                table: "WFStateUser",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateUser_UserId",
+                table: "WFStateUser",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateUser_WFStateId",
+                table: "WFStateUser",
+                column: "WFStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFStateUserStatus_WFStateAssignedUserId",
+                table: "WFStateUserStatus",
+                column: "WFStateAssignedUserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFTransition_WFCurrentStateId",
+                table: "WFTransition",
+                column: "WFCurrentStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFTransition_WFNextStateId",
+                table: "WFTransition",
+                column: "WFNextStateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFTransition_WorkFlowId",
+                table: "WFTransition",
+                column: "WorkFlowId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFTransitionAction_WFActionId",
+                table: "WFTransitionAction",
+                column: "WFActionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFTransitionAction_WFTransitionId",
+                table: "WFTransitionAction",
+                column: "WFTransitionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFTransitionActivity_PrevWFActionId",
+                table: "WFTransitionActivity",
+                column: "PrevWFActionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFTransitionActivity_WFActivityId",
+                table: "WFTransitionActivity",
+                column: "WFActivityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFTransitionActivity_WFTransitionId",
+                table: "WFTransitionActivity",
+                column: "WFTransitionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WFTransitionActivityNotification_WFTransitionActivityId",
+                table: "WFTransitionActivityNotification",
+                column: "WFTransitionActivityId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -968,14 +1743,71 @@ namespace DB.Migrations
             migrationBuilder.DropTable(
                 name: "UserTokens");
 
-       
-          
+            migrationBuilder.DropTable(
+                name: "WFRejectReason");
+
+            migrationBuilder.DropTable(
+                name: "WFRequestAction");
+
+            migrationBuilder.DropTable(
+                name: "WFRequestPosition");
+
+            migrationBuilder.DropTable(
+                name: "WFStateActivityNotification");
+
+            migrationBuilder.DropTable(
+                name: "WFStateRole");
+
+            migrationBuilder.DropTable(
+                name: "WFStateUser");
+
+            migrationBuilder.DropTable(
+                name: "WFStateUserStatus");
+
+            migrationBuilder.DropTable(
+                name: "WFTransitionAction");
+
+            migrationBuilder.DropTable(
+                name: "WFTransitionActivityNotification");
+
+            migrationBuilder.DropTable(
+                name: "PageActions");
+
+            migrationBuilder.DropTable(
+                name: "Trackers");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "WFRequestHistory");
+
+            migrationBuilder.DropTable(
+                name: "WFStateActivitie");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "WFStateAssignedUser");
+
+            migrationBuilder.DropTable(
+                name: "WFTransitionActivity");
+
+            migrationBuilder.DropTable(
+                name: "WFRequest");
+
             migrationBuilder.DropTable(
                 name: "AppUsers");
 
-          
+            migrationBuilder.DropTable(
+                name: "WFAction");
 
- 
+            migrationBuilder.DropTable(
+                name: "WFActivity");
+
+            migrationBuilder.DropTable(
+                name: "WFTransition");
 
             migrationBuilder.DropTable(
                 name: "Attachments");
@@ -983,6 +1815,11 @@ namespace DB.Migrations
             migrationBuilder.DropTable(
                 name: "Actions");
 
+            migrationBuilder.DropTable(
+                name: "WFState");
+
+            migrationBuilder.DropTable(
+                name: "WorkFlow");
 
             migrationBuilder.DropTable(
                 name: "Pages");

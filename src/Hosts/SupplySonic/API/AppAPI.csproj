@@ -45,13 +45,11 @@
 		<PackageReference Include="Xabe.FFmpeg" Version="5.0.2" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\CommonServices\HelperServices.csproj" />
 		<ProjectReference Include="..\DB\DB.csproj" />
 		<ProjectReference Include="..\DTO\DTO.csproj" />
 		<ProjectReference Include="..\Helpers\Helpers.csproj" />
 		<ProjectReference Include="..\IServiceContractor\IServiceContractor.csproj" />
 		<ProjectReference Include="..\Service\Service.csproj" />
-		<ProjectReference Include="..\Validator\Validator.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="wwwroot\Reports\" />

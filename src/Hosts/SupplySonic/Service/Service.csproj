@@ -37,14 +37,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CommonServices\HelperServices.csproj" />
 	  <ProjectReference Include="..\Core\Core.csproj" />
 	  <ProjectReference Include="..\DB\DB.csproj" />
 	  <ProjectReference Include="..\DTO\DTO.csproj" />
 	  <ProjectReference Include="..\Helpers\Helpers.csproj" />
 	  <ProjectReference Include="..\IServiceContractor\IServiceContractor.csproj" />
 	  <ProjectReference Include="..\Localization\Localization.csproj" />
-	  <ProjectReference Include="..\Validator\Validator.csproj" />
-	</ItemGroup>
+		</ItemGroup>
 	
 </Project>
