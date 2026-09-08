@@ -110,7 +110,25 @@ namespace AppAPI.CommonService
                 if (!httpContext.Response.HasStarted)
                 {
                     httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;//(int)HttpStatusCode.InternalServerError;
-                    await httpContext.Response.WriteAsJsonAsync(new { EXCode = obj.EXCode, Message = new { SystemError = "SystemError" }, type = obj.LogType }); //BadRequest(new { EXCode = obj.EXCode[...]
+                    // TEMPORARY DEBUG: expose real exception details to the client for troubleshooting.
+                    // TODO: REVERT this before going back to normal production behavior.
+                    await httpContext.Response.WriteAsJsonAsync(new
+                    {
+                        EXCode = obj.EXCode,
+                        Message = new
+                        {
+                            SystemError = "SystemError",
+                            DebugMessage = ex.Message,
+                            DebugExceptionType = ex.GetType().FullName,
+                            DebugStackTrace = ex.StackTrace,
+                            DebugInnerException = ex.InnerException != null ? new
+                            {
+                                Message = ex.InnerException.Message,
+                                StackTrace = ex.InnerException.StackTrace
+                            } : null
+                        },
+                        type = obj.LogType
+                    });
                 }
             }
         }
