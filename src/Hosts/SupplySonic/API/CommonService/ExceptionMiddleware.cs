@@ -59,8 +59,8 @@ namespace AppAPI.CommonService
                     RequestQuery = queryStr,
                     Request = httpContext.Request.Headers,
 
-                    ControllerName = httpContext.Request.RouteValues["controller"].ToString(),
-                    ActionName = httpContext.Request.RouteValues["action"].ToString()
+                    ControllerName = httpContext.Request.RouteValues.TryGetValue("controller", out var bCtrl) ? bCtrl?.ToString() : null,
+                    ActionName = httpContext.Request.RouteValues.TryGetValue("action", out var bAction) ? bAction?.ToString() : null
                 };
                 var edata = _globalFormat.LogFormat(httpContext, obj);
                 _logger.LogWarning($"End Execute by {edata.UserId} from connection={edata.IP} using data={edata.Data}");
@@ -75,10 +75,17 @@ namespace AppAPI.CommonService
                 //httpContext.Request.Body.Seek(0, SeekOrigin.Begin);
                 var bodyStr = "";
                 var queryStr = "";
-                using (StreamReader reader
-                  = new StreamReader(httpContext.Request.Body))
+                try
                 {
-                    bodyStr = await reader.ReadToEndAsync();
+                    using (StreamReader reader
+                      = new StreamReader(httpContext.Request.Body))
+                    {
+                        bodyStr = await reader.ReadToEndAsync();
+                    }
+                }
+                catch
+                {
+                    bodyStr = "";
                 }
                 if (httpContext.Request.QueryString.HasValue)
                 {
@@ -95,13 +102,16 @@ namespace AppAPI.CommonService
                     RequestBody = bodyStr,
                     RequestQuery = queryStr,
                     Request = httpContext.Request.Headers,
-                    ControllerName = httpContext.Request.RouteValues["controller"].ToString(),
-                    ActionName = httpContext.Request.RouteValues["action"].ToString()
+                    ControllerName = httpContext.Request.RouteValues.TryGetValue("controller", out var ctrl) ? ctrl?.ToString() : null,
+                    ActionName = httpContext.Request.RouteValues.TryGetValue("action", out var action) ? action?.ToString() : null
                 };
                 var edata = _globalFormat.LogFormat(httpContext, obj);
-                _logger.LogError($"End Execute by {edata.UserId} from connection={edata.IP} using data={edata.Data}");
-                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;//(int)HttpStatusCode.InternalServerError;
-                await httpContext.Response.WriteAsJsonAsync(new { EXCode = obj.EXCode, Message = new { SystemError = "SystemError" }, type = obj.LogType }); //BadRequest(new { EXCode = obj.EXCode, Message = "SystemError", type = obj.type });
+                _logger.LogError(ex, $"End Execute by {edata.UserId} from connection={edata.IP} using data={edata.Data}. Message={ex.Message}");
+                if (!httpContext.Response.HasStarted)
+                {
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;//(int)HttpStatusCode.InternalServerError;
+                    await httpContext.Response.WriteAsJsonAsync(new { EXCode = obj.EXCode, Message = new { SystemError = "SystemError" }, type = obj.LogType }); //BadRequest(new { EXCode = obj.EXCode[...]
+                }
             }
         }
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
