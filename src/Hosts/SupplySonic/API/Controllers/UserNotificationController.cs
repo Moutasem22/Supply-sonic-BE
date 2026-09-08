@@ -1,7 +1,6 @@
-﻿using DTO.CommandDTO;
-using DTO.NotificationsDTO;
+﻿using DTO;
 using Helpers;
-using IServiceContractor.INotificationServices;
+using IServiceContractor;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +26,15 @@ namespace AppAPI.Controllers
 
             var userId = fdata.UserId;
             var val = _repository.GetAll(query, int.Parse(userId));
+
+            return Ok(val);
+        }
+
+        [HttpPost("GetAllNotification")]
+        public IActionResult GetAllNotification([FromBody] QueryViewModel<UserNotificationDTO> query)
+        {
+          
+            var val = _repository.GetAllNotification(query);
 
             return Ok(val);
         }

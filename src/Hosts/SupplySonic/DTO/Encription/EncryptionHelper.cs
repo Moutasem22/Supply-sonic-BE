@@ -13,7 +13,6 @@ namespace DTO
         //private static string secretKey = "@^Y$^*(%&$#%C^#%^38n*#6835sedrt6tvbry";
         private static string secretKey = "vdtvvYS91HMSugU0TPxF6PeNMKQqOh8eXQXPrUrJUuTaRVQa43IgNzv5axfmVO0/n0Cnlc3zmqxsyv7cKE/DaLdaOOqi7WN+5tmOCYUXYPr+1pdKzwb+6c5k3DwuJE8/C4hiLs+ypBgr68Y0KlTXJyRcY77eRMgwM099lEyeGt6On6TqbA2xitE92PwhxA0SrR4EyOWF5206O6JLDbiBCBZVeywPCa3DBfALxoKhkgYZK1fdhC4Rv9poTvwULlwMo88MOlL1L2WQAuzXrBS+hiFww/ALvsUgUCrsx9ML2io4o0TvYG2q4sKd2DRoC9KFxaqRgTNM2cd3gv7t9XExAQ==";
 
-
         public static string Encrypt(string text)
         {
             try

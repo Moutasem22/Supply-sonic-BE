@@ -1,11 +1,12 @@
 ﻿
 using Core.Enums;
-using Core.Models.Attachments;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Net;
+using System.Numerics;
 using System.Text;
 
 namespace Core.Models.Identity
@@ -30,7 +31,12 @@ namespace Core.Models.Identity
         /// <param name="id"></param>
 
 
-        public AppUser(string username, string fullName, string email, string userId, List<UserRole> userRoles, EnumUserCategory userCategory = EnumUserCategory.InternalUser,
+        public AppUser(string username, string fullName, string email, string userId, List<UserRole> userRoles
+             , string? phone, string? address,
+             EnumGender? gender, DateTime? birthday, int? residenceCountryId
+                    , int? cityId, string? stateName,
+            EnumUserCategory userCategory = EnumUserCategory.InternalUser,
+           
             bool isActive = true, int id = 0) : this()
         {
             this.UserName = username;
@@ -41,9 +47,21 @@ namespace Core.Models.Identity
             this.UserCategory = userCategory;        
             this.IsActive = isActive;
             this.UserRoles = userRoles;
+            this.PhoneNumber = phone;
+            this.Address = address;
+            this.Gender = gender;
+            this.Birthdate = birthday;
+            this.ResidenceCountryId = residenceCountryId;
+            this.CityId = cityId;
+            this.StateName = stateName;
         }
         public void Update(string userName, string fullName, string email, string userId, string Password, IPasswordHasher<AppUser> _passwordHasher, List<int> userRoles
-            , EnumUserCategory userCategory = EnumUserCategory.InternalUser, bool isActive = true)
+            ,string? phone, string? address,
+               EnumGender? gender, DateTime? birthday, int? residenceCountryId
+                    , int? cityId, string? stateName,
+            EnumUserCategory userCategory = EnumUserCategory.InternalUser,  bool isActive = true 
+         
+            )
         {
             if (!string.IsNullOrWhiteSpace(Password))
             {
@@ -54,10 +72,18 @@ namespace Core.Models.Identity
             this.UserName = userName;
             this.FullName = fullName;
             this.Email = email;
-         
-            
+            this.Address = address;
+
             this.UserCategory = userCategory;
             this.IsActive = isActive;
+            this.PhoneNumber = phone;
+            this.Gender = gender;
+            this.Birthdate = birthday;
+            this.ResidenceCountryId = residenceCountryId;
+            this.CityId = cityId;
+            this.StateName = stateName;
+
+
 
             //To delete items 
             List<int> deletedIds = this.UserRoles.Select(x => x.RoleId).Except(userRoles).ToList();
@@ -75,6 +101,8 @@ namespace Core.Models.Identity
             {
                 this.UserRoles.Add(new UserRole() { RoleId = item });
             }
+
+
 
         }
         public void UpdateName(string fullName)
@@ -163,6 +191,19 @@ namespace Core.Models.Identity
         public string? Extension { get; set; }
         public int? ProfileAttachmentId { get; set; }
         public Attachment ProfileAttachment { get; set; }
+        
+        public string? Address { get; private set; }
+
+        //New Fileds For 
+        public int? ResidenceCountryId { get; private set; }
+        public Country ResidenceCountry { get; private set; }
+
+        public int? CityId { get; private set; }
+        public City City { get; private set; }
+
+        public string? StateName { get; private set; }
+        public DateTime? Birthdate { get; private set; }
+        public EnumGender? Gender { get; set; }
 
         [NotMapped]
         public string? Password { get; private set; }
@@ -187,5 +228,10 @@ namespace Core.Models.Identity
         {
             this.Token = null;
         }
+        public virtual void RecoveryUser()
+        {
+            this.IsDeleted = false;
+        }
+        
     }
 }

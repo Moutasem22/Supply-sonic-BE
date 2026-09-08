@@ -10,10 +10,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using DTO.CommandDTO;
-using DTO.IdentityDTO;
+using DTO;
 using Helpers;
-using IServiceContractor.IdentityInterFaces;
+using IServiceContractor;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -119,7 +118,7 @@ namespace AppAPI.Controllers
 
         }
 
-        [HttpPut("ChangePassword")]
+        [HttpPost("ChangePassword")]
         [Authorize]
         public async Task<ActionResult> ChangePassword(PasswordDto dto)
         {

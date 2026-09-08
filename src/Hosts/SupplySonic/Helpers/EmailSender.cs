@@ -13,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 
 using System.Drawing;
-
+using DTO;
 
 namespace Helpers
 {
@@ -60,81 +60,81 @@ namespace Helpers
         //    }
         //}
 
-        //private async Task<bool> Execute(string email, string subject, string message, Print_pdfDTO attachmentFile = null)
-        //{
-        //    try
-        //    {
+        private async Task<bool> Execute(string email, string subject, string message, Print_pdfDTO attachmentFile = null)
+        {
+            try
+            {
 
-        //        var tempFileStream = new FileStream(_env.ContentRootPath + "/wwwroot/EmailTemplate/TempEn.html", FileMode.Open, FileAccess.Read);
-        //        string emailWithTemp = "";
-        //        using (StreamReader reader = new StreamReader(tempFileStream))
-        //        {
-        //            emailWithTemp = reader.ReadToEnd();
-        //        }
-
-
-
-        //        var appearance = _dbcontext.AppearancSettings.FirstOrDefault();
-        //        var logoAttachment = _dbcontext.Attachments.FirstOrDefault(x=> appearance != null && x.Id == appearance.LogoAttachmentId && x.IsActive && !x.IsDeleted);
-        //        var logo = "";
-        //        if (logoAttachment != null)
-        //            logo = ImageToBase64(@"" + _env.ContentRootPath + "/wwwroot" + logoAttachment.Path);
-
-
-        //        emailWithTemp = emailWithTemp.Replace("{{message}}", message).Replace("{{logo}}", logo);
-
-
-        //        // Prepare an email message to be sent
-        //        var mimeMessage = new MimeMessage();
-        //        mimeMessage.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.Sender));
-        //        mimeMessage.To.Add(MailboxAddress.Parse(email));
-
-        //        if (!string.IsNullOrWhiteSpace(_emailSettings.MailBBC))
-        //        {
-        //            mimeMessage.Bcc.Add(MailboxAddress.Parse(_emailSettings.MailBBC));
-        //        }
-
-        //        mimeMessage.Subject = subject;
+                var tempFileStream = new FileStream(_env.ContentRootPath + "/wwwroot/EmailTemplate/TempEn.html", FileMode.Open, FileAccess.Read);
+                string emailWithTemp = "";
+                using (StreamReader reader = new StreamReader(tempFileStream))
+                {
+                    emailWithTemp = reader.ReadToEnd();
+                }
 
 
 
-        //        // Add email body and file attachments
-        //        var bodyBuilder = new BodyBuilder
-        //        {
-        //            HtmlBody = emailWithTemp
-        //        };
-        //        mimeMessage.Body = bodyBuilder.ToMessageBody();
-
-        //        if (attachmentFile != null && attachmentFile.Data != null && attachmentFile.FileName != null)
-
-        //        {
-        //            var builder = new BodyBuilder();
-        //            builder.HtmlBody = emailWithTemp;
-        //            //base46Attachment = GetBase64(base46Attachment);
-        //            var bytes = attachmentFile.Data;
-        //            //MimeEntity.Load(new ContentType("application", "pdf"), new MemoryStream(bytes));
-        //            builder.Attachments.Add(attachmentFile.FileName, bytes);
-        //            mimeMessage.Body = builder.ToMessageBody();
-        //        }
+               // var appearance = _dbcontext.AppearancSettings.FirstOrDefault();
+               // var logoAttachment = _dbcontext.Attachments.FirstOrDefault(x => appearance != null && x.Id == appearance.LogoAttachmentId && x.IsActive && !x.IsDeleted);
+                var logo = "";
+               // if (logoAttachment != null)
+                 //   logo = ImageToBase64(@"" + _env.ContentRootPath + "/wwwroot" + logoAttachment.Path);
 
 
-        //        //   // Connect and authenticate with the SMTP server
-        //      //  var smtpClient = new SmtpClient();
-        //      //  await smtpClient.ConnectAsync(_emailSettings.MailServer, _emailSettings.MailPort, SecureSocketOptions.StartTls);
-        //     //   await smtpClient.AuthenticateAsync(_emailSettings.Sender, _emailSettings.Password);
+                emailWithTemp = emailWithTemp.Replace("{{message}}", message).Replace("{{logo}}", logo);
 
-        //        // Send email message
-        //       // await smtpClient.SendAsync(mimeMessage);
-        //       // await smtpClient.DisconnectAsync(true);
-        //      //  smtpClient.Dispose();
-        //        return true;
-        //    }
-        //    catch
-        //    {
-        //        // TODO: handle exception
-        //        //throw new InvalidOperationException(ex.Message);
-        //    }
-        //    return false;
-        //}       
+
+                // Prepare an email message to be sent
+                var mimeMessage = new MimeMessage();
+                mimeMessage.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.Sender));
+                mimeMessage.To.Add(MailboxAddress.Parse(email));
+
+                if (!string.IsNullOrWhiteSpace(_emailSettings.MailBBC))
+                {
+                    mimeMessage.Bcc.Add(MailboxAddress.Parse(_emailSettings.MailBBC));
+                }
+
+                mimeMessage.Subject = subject;
+
+
+
+                // Add email body and file attachments
+                var bodyBuilder = new BodyBuilder
+                {
+                    HtmlBody = emailWithTemp
+                };
+                mimeMessage.Body = bodyBuilder.ToMessageBody();
+
+                if (attachmentFile != null && attachmentFile.Data != null && attachmentFile.FileName != null)
+
+                {
+                    var builder = new BodyBuilder();
+                    builder.HtmlBody = emailWithTemp;
+                    //base46Attachment = GetBase64(base46Attachment);
+                    var bytes = attachmentFile.Data;
+                    //MimeEntity.Load(new ContentType("application", "pdf"), new MemoryStream(bytes));
+                    builder.Attachments.Add(attachmentFile.FileName, bytes);
+                    mimeMessage.Body = builder.ToMessageBody();
+                }
+
+
+                //   // Connect and authenticate with the SMTP server
+                //  var smtpClient = new SmtpClient();
+                //  await smtpClient.ConnectAsync(_emailSettings.MailServer, _emailSettings.MailPort, SecureSocketOptions.StartTls);
+                //   await smtpClient.AuthenticateAsync(_emailSettings.Sender, _emailSettings.Password);
+
+                // Send email message
+                // await smtpClient.SendAsync(mimeMessage);
+                // await smtpClient.DisconnectAsync(true);
+                //  smtpClient.Dispose();
+                return true;
+            }
+            catch
+            {
+                // TODO: handle exception
+                //throw new InvalidOperationException(ex.Message);
+            }
+            return false;
+        }
     }
 }

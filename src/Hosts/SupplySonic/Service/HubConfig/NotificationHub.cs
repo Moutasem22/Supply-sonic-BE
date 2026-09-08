@@ -1,4 +1,4 @@
-﻿using IServiceContractor.IdentityInterFaces;
+﻿using IServiceContractor;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;

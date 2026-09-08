@@ -1,6 +1,5 @@
-﻿using DTO.CommandDTO;
-using DTO.IdentityDTO;
-using IServiceContractor.IdentityInterFaces;
+﻿using DTO;
+using IServiceContractor;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppAPI.Controllers;

@@ -1,5 +1,5 @@
-﻿using DTO.SettingDTO;
-using IServiceContractor.ISettingServices;
+﻿using DTO;
+using IServiceContractor;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -17,7 +17,7 @@ namespace AppAPI.Controllers
             _IAppearanceSettingsService=iAppearanceSettingsService;
         }
 
-        [HttpPut("Update")]
+        [HttpPost("Update")]
         public async Task<IActionResult> Update(AppearanceAddEditDto AppearanceDto)
         {
             var val = await _IAppearanceSettingsService.Update(AppearanceDto);

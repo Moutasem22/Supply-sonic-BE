@@ -1,5 +1,5 @@
-﻿using Core.Models.Identity;
-using Core.Models.Notifications;
+﻿using Core.Models;
+using Core.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -15,6 +15,7 @@ namespace DB.Configurations
             builder.HasOne<Notification>(x => x.Notification)
                .WithMany(y => y.UserNotifications).HasForeignKey(z => z.NotificationId).OnDelete(DeleteBehavior.Cascade);
 
+         
         }
     }
 }

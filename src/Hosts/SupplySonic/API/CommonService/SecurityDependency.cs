@@ -19,10 +19,18 @@ namespace AppAPI.CommonService
         {
             // configure jwt authentication  
             byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddIdentityCore<SupplierAppUser>()
+            .AddEntityFrameworkStores<DBContext>()
+            .AddDefaultTokenProviders();
+
+
+            //services.AddIdentityCore<ProviderAppUser>()
+            //        .AddEntityFrameworkStores<DBContext>()
+            //        .AddDefaultTokenProviders();
 
             services.AddIdentity<AppUser, Role>()
-          .AddEntityFrameworkStores<DBContext>()
-          .AddDefaultTokenProviders();
+           .AddEntityFrameworkStores<DBContext>()
+           .AddDefaultTokenProviders();
 
             services.AddAuthentication(x =>
             {

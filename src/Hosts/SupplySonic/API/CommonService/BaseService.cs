@@ -4,6 +4,7 @@ using DTO;
 using FluentValidation;
 using FluentValidation.Results;
 using Helpers;
+using IServiceContractor;
 using IServiceContractor.ICommonService;
 using Localization;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Core.Enums;
-using IServiceContractor.INotificationServices;
 
 namespace AppAPI.CommonService;
 
@@ -31,6 +31,7 @@ public class BaseService : IBaseService
     private readonly IExceptionMessages _exceptionMessages;
     private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly IHostEnvironment _env;
+
     private readonly ValidationHelper _validationHelper;
     private readonly INotificationSettingsService _notificationSettingsService;
     public BaseService(DBContext dbcontext, IHttpContextAccessor httpContextAccessor, IExceptionMessages exceptionMessages,
@@ -43,6 +44,7 @@ public class BaseService : IBaseService
         _localizer = localizer;
         _exceptionMessages = exceptionMessages;
         _env = env;
+      
         _validationHelper = validationHelper;
         _notificationSettingsService = notificationSettingsService;
     }
@@ -55,6 +57,7 @@ public class BaseService : IBaseService
 
     public IExceptionMessages ExceptionMessages => _exceptionMessages;
 
+
     public IHttpContextAccessor HttpContextAccessor => _httpContextAccessor;
 
     public IHostEnvironment HostEnvironment => _env;
@@ -65,6 +68,21 @@ public class BaseService : IBaseService
 
 
     public void CheckValidation<T>(T dto, IValidator<T> validator) => _validationHelper.Validate(dto, validator);
+
+    public DBContext GetContext()
+    {
+        return _dbcontext;
+    }
+
+    public string GetCurrentLanguage()
+    {
+        return _httpContextAccessor.HttpContext.Request.Headers["lang"].ToString() ?? "ar";
+    }
+
+    public IStringLocalizer<SharedResource> GetLocalizer()
+    {
+        return _localizer;
+    }
 
 
     public void Validate<T>(T dto, IValidator<T> validator)
@@ -83,6 +101,12 @@ public class BaseService : IBaseService
         }
 
       
+    }
+
+
+    public IExceptionMessages GetExceptionMessages()
+    {
+        return _exceptionMessages;
     }
 
     private int GetUserId(ClaimsPrincipal principal)

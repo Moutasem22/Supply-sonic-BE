@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security;
 using System.Text;
 
 namespace Core.Models.Identity
@@ -11,30 +12,35 @@ namespace Core.Models.Identity
     public class Role : IdentityRole<int>
     {
 
-        public Role(string NameAr, string name, List<Permission> Permissions, int Id = 0) : this()
+        public Role(string NameAr, string name, List<Permission> _Permissions, int Id = 0) : this()
         {
             this.Name = name;
             this.NameAr = NameAr;
-            this.Permissions = Permissions;
+            this.Permissions = _Permissions;
             this.Id = Id;
             //this.Permissions = roleDto.Permissions.Select(x => new Permission() { PageActionId = x.PageActionId }).ToList<Permission>();
         }
-        public void Update(string NameAr, string Name, List<Permission> Permissions)
+        public void Update(string NameAr, string Name, List<Permission> _Permissions)
         {
 
-
-            foreach (var item in this.Permissions.ToList())
-            {
-                this.Permissions.Remove(item);
-            }
+            this.Permissions.Clear();
+            //foreach (var item in this.Permissions.ToList())
+            //{
+            //    this.Permissions.Remove(item);
+            //}
 
             this.Name = Name;
             this.NameAr = NameAr;
 
-            foreach (var item in Permissions.ToList())
-            {
-                this.Permissions.Add(new Permission() { PageActionId = item.PageActionId });
-            }
+            //foreach (var item in Permissions.ToList())
+            //{
+            //    this.Permissions.Add(new Permission() { PageActionId = item.PageActionId });
+            //}
+
+            List<Permission> list = new List<Permission>();
+            list.AddRange(_Permissions);
+            this.Permissions = list;
+
             //this.Permissions.ToList().AddRange(roleDto.Permissions.Select(x => new Permission() { PageActionId = x.PageActionId }).ToList<Permission>());
             //this.PageLookupData.ToList().AddRange(roleDto.PageLookupData.Distinct().Select(x => new PageLookupData() { LookupId = x.LookupId, PageLookupId = x.PageLookupId }).ToList<PageLookupData>());      
         }

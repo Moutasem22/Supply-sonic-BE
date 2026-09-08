@@ -61,8 +61,12 @@ namespace AppAPI.CommonService
             };
             if (context.Request.Path.Value != "/Notification/negotiate" && context.Request.Path.Value != "/Notification")
             {
-                string controllername = context.Request.RouteValues["controller"].ToString();
-                string actionname = context.Request.RouteValues["action"].ToString();
+                string controllername = context.Request.RouteValues.TryGetValue("controller", out var controller)
+                    ? controller?.ToString() ?? string.Empty
+                    : string.Empty;
+                string actionname = context.Request.RouteValues.TryGetValue("action", out var action)
+                    ? action?.ToString() ?? string.Empty
+                    : string.Empty;
                 var result = await _ldbcontext.Database.ExecuteSqlRawAsync($"exec @returnValue  = CheckApiPermission @userId= {userId},@controllername='{controllername}' ,@actionname='{actionname}'", parameterReturn);
 
                 if (int.Parse(parameterReturn.Value.ToString()) > 0)

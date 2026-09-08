@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DTO.CommandDTO;
+using DTO;
 using Helpers;
-using IServiceContractor.IAttachmentServices;
+using IServiceContractor;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +16,7 @@ namespace AppAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+   // [Authorize]
     public class AttachmentController : ControllerBase
     {
         IAttachmentService _repository;

@@ -1,5 +1,5 @@
-﻿using DTO.NotificationsDTO;
-using IServiceContractor.INotificationServices;
+﻿using DTO;
+using IServiceContractor;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace AppAPI.Controllers
             _notificationSettingsService= notificationSettingsService;
         }
 
-        [HttpPut("Update")]
+        [HttpPost("Update")]
         public async Task<IActionResult> Update(List<NotificationSettingAddEditDto> notificationSettings)
         {
             var val = await _notificationSettingsService.Update(notificationSettings);
