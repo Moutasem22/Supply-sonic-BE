@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -17,7 +17,7 @@
 		<PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.12" />
 		<PackageReference Include="NEST" Version="7.15.2" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 
 	</ItemGroup>
 	<ItemGroup>
