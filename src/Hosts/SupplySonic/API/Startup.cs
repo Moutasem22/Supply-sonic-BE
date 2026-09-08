@@ -63,6 +63,10 @@ namespace AppAPI
 
         public IConfiguration Configuration { get; }
 
+        // Tracks whether Hangfire was successfully configured in ConfigureServices,
+        // so the Hangfire middleware is only used when it is actually registered.
+        private bool hangfireEnabled;
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -106,22 +110,46 @@ namespace AppAPI
             });
             //////////////////////////////////
             // Add Hangfire services.
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+            // Hangfire needs a valid SQL Server connection string. If it is missing or invalid,
+            // skip its registration instead of letting it crash the whole application at startup.
+            string hangfireConnectionString = Configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrWhiteSpace(hangfireConnectionString))
+            {
+                Console.WriteLine("Warning: Connection string 'DefaultConnection' is missing or empty, Hangfire is disabled and the application will continue without background jobs.");
+            }
+            else
+            {
+                try
                 {
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(10),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(10),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    UsePageLocksOnDequeue = true,
-                    DisableGlobalLocks = true
-                }));
+                    // Creating the storage eagerly validates the connection string here (inside the try/catch)
+                    // instead of later, while the service provider is resolving Hangfire services.
+                    SqlServerStorage hangfireStorage = new SqlServerStorage(hangfireConnectionString, new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(10),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(10),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        UsePageLocksOnDequeue = true,
+                        DisableGlobalLocks = true
+                    });
 
-            // Add the processing server as IHostedService
-            services.AddHangfireServer();
+                    services.AddHangfire(configuration => configuration
+                        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                        .UseSimpleAssemblyNameTypeSerializer()
+                        .UseRecommendedSerializerSettings()
+                        .UseStorage(hangfireStorage));
+
+                    // Add the processing server as IHostedService
+                    services.AddHangfireServer();
+
+                    hangfireEnabled = true;
+                }
+                catch (Exception ex)
+                {
+                    hangfireEnabled = false;
+                    Console.WriteLine($"Warning: Failed to configure Hangfire, continuing without it. {ex.Message}");
+                }
+            }
             //////////////////////////////////////////////////////////////////////
             ///
             services.AddMvc(options =>
@@ -221,10 +249,14 @@ namespace AppAPI
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseMiddleware<ExceptionMiddleware>();
-            app.UseHangfireDashboard();
 
-            //RecurringJob.AddOrUpdate(() =>  _notificationService.SendEmailJobHighPriority(EnumPriority.High), Cron.MinuteInterval(5));
-            //RecurringJob.AddOrUpdate(() =>  _notificationService.SendEmailJob(EnumPriority.Normal), Cron.MinuteInterval(15));
+            if (hangfireEnabled)
+            {
+                app.UseHangfireDashboard();
+
+                //RecurringJob.AddOrUpdate(() =>  _notificationService.SendEmailJobHighPriority(EnumPriority.High), Cron.MinuteInterval(5));
+                //RecurringJob.AddOrUpdate(() =>  _notificationService.SendEmailJob(EnumPriority.Normal), Cron.MinuteInterval(15));
+            }
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
