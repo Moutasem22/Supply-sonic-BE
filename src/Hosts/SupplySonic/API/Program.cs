@@ -74,20 +74,47 @@ namespace AppAPI
                     optional: true)
                 .Build();
 
-            string logFilePath = configuration["LogFilePath:Uri"];
-            Log.Logger = new LoggerConfiguration()
+            var loggerConfiguration = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 //.Enrich.WithMachineName()
                 .WriteTo.Debug()
-                .WriteTo.Console()
-                .WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
-                .WriteTo.File(new JsonFormatter(), logFilePath + "/log.json",
+                .WriteTo.Console();
+
+            var elasticSinkOptions = ConfigureElasticSink(configuration, environment);
+            if (elasticSinkOptions != null)
+            {
+                try
+                {
+                    loggerConfiguration.WriteTo.Elasticsearch(elasticSinkOptions);
+                }
+                catch (System.Exception ex)
+                {
+                    Console.WriteLine($"Warning: Failed to configure Elasticsearch sink, continuing without it. {ex.Message}");
+                }
+            }
+
+            try
+            {
+                string logFilePath = configuration["LogFilePath:Uri"];
+                if (string.IsNullOrWhiteSpace(logFilePath))
+                {
+                    logFilePath = System.IO.Path.Combine(AppContext.BaseDirectory, "Logs");
+                }
+
+                loggerConfiguration.WriteTo.File(new JsonFormatter(), System.IO.Path.Combine(logFilePath, "log.json"),
                 fileSizeLimitBytes: 10_000_000,
                 rollOnFileSizeLimit: true,
                 shared: true,
                 //retainedFileCountLimit:3,
                 rollingInterval: RollingInterval.Day,
-                flushToDiskInterval: TimeSpan.FromSeconds(1))
+                flushToDiskInterval: TimeSpan.FromSeconds(1));
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to configure file sink, continuing without it. {ex.Message}");
+            }
+
+            Log.Logger = loggerConfiguration
                 .Enrich.WithProperty("Environment", environment)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
@@ -95,11 +122,25 @@ namespace AppAPI
 
         private static ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string environment)
         {
-            return new ElasticsearchSinkOptions(new Uri(configuration["ElasticConfiguration:Uri"]))
+            var elasticUriValue = configuration["ElasticConfiguration:Uri"];
+            if (!Uri.TryCreate(elasticUriValue, UriKind.Absolute, out Uri elasticUri))
             {
-                AutoRegisterTemplate = true,
-                IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.Now:yyyy-MM}"
-            };
+                return null;
+            }
+
+            try
+            {
+                return new ElasticsearchSinkOptions(elasticUri)
+                {
+                    AutoRegisterTemplate = true,
+                    IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.Now:yyyy-MM}"
+                };
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to build Elasticsearch sink options, continuing without it. {ex.Message}");
+                return null;
+            }
         }
     }
 }
