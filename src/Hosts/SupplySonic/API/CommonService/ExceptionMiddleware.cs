@@ -14,6 +14,7 @@ namespace AppAPI.CommonService
 {
     //https://code-maze.com/global-error-handling-aspnetcore/
     //https://codewithmukesh.com/blog/global-exception-handling-in-aspnet-core/
+    // Redeploy trigger: force a fresh build/deploy so this version becomes Active.
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
